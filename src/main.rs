@@ -17,13 +17,13 @@ async fn main() {
         });
 
     let index = warp::path::end()
-        .and(warp::fs::file("static/index.html"));
+        .and(warp::fs::file("client/index.html"));
 
-    let dir = warp::get()
-        .and(warp::fs::dir("static"));
+    let client = warp::get()
+        .and(warp::fs::dir("client"));
 
     let routes = index
-        .or(dir)
+        .or(client)
         .or(data);
 
     warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
