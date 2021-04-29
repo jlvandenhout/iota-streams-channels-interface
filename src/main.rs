@@ -1,20 +1,16 @@
 
 use futures::{SinkExt, StreamExt};
-use warp::{
-    Filter,
-    ws::{
-        Ws,
-        WebSocket,
-    }
-};
+use warp::Filter;
 
 #[tokio::main]
 async fn main() {
     let data = warp::path("data")
         .and(warp::ws())
-        .map(|ws: Ws| {
-            ws.on_upgrade(move |socket| handle(socket))
-        });
+        .map(
+            |ws: warp::ws::Ws| {
+                ws.on_upgrade(move |socket| handle(socket))
+            }
+        );
 
     let index = warp::path::end()
         .and(warp::fs::file("client/index.html"));
@@ -26,10 +22,12 @@ async fn main() {
         .or(client)
         .or(data);
 
-    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
+    warp::serve(routes)
+        .run(([127, 0, 0, 1], 3030))
+        .await;
 }
 
-async fn handle(mut socket: WebSocket) {
+async fn handle(mut socket: warp::ws::WebSocket) {
     while let Some(input) = socket.next().await {
         match input {
             Ok(message) => {

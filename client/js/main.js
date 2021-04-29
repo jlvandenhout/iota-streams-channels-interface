@@ -1,47 +1,46 @@
-const url = 'ws://' + location.host + '/data';
+const parent = document.body;
+const url = "ws://" + location.host + "/data";
+const interval = 2000;
 var socket = null;
-var interval = 5000;
 
 const output = document.createElement("div");
-document.body.appendChild(output);
+parent.appendChild(output);
 
 const input = document.createElement("input");
 input.type = "text";
 input.value = "";
-input.placeholder = "Data...";
-document.body.appendChild(input);
+input.autofocus = true;
+parent.appendChild(input);
 
-const send = document.createElement("button");
-send.textContent = "Send";
-send.disabled = true;
-document.body.appendChild(send);
+function onKeyDown(event) {
+    if(event.key === "Enter" && !event.repeat) {
+        socket.send(input.value);
+        input.value = "";
+    }
+}
 
-send.onclick = function() {
-    socket.send(input.value);
-    input.value = "";
-};
+input.addEventListener("keydown", onKeyDown, false);
 
-function append(data) {
-    const line = document.createElement('p');
-    line.textContent = data;
+function onOpen() {
+    input.disabled = false;
+}
+
+function onMessage(event) {
+    const line = document.createElement("p");
+    line.textContent = event.data;
     output.appendChild(line);
+}
+
+function onClose() {
+    input.disabled = true;
 }
 
 function connect() {
     if (!socket || socket.readyState === WebSocket.CLOSED) {
         socket = new WebSocket(url);
-
-        socket.onopen = function() {
-            send.disabled = false;
-        };
-
-        socket.onmessage = function(event) {
-            append(event.data);
-        };
-
-        socket.onclose = function(event) {
-            send.disabled = true;
-        };
+        socket.addEventListener("open", onOpen);
+        socket.addEventListener("message", onMessage);
+        socket.addEventListener("close", onClose);
     }
 }
 
