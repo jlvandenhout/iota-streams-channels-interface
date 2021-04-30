@@ -1,6 +1,29 @@
 
 use futures::{SinkExt, StreamExt};
-use warp::Filter;
+use warp::{Filter, Rejection, Reply};
+
+
+async fn form_handler(mut form_data: warp::multipart::FormData) -> Result<impl Reply, Rejection> {
+    while let Some(part) = form_data.next().await {
+        match part {
+            Ok(message) => {
+                println!("{}", message.name());
+                let stream = message.stream();
+                while let Some(s) = stream.next().await {
+                    match s {
+                        Ok(data) => {
+                            let string = String::from_utf8(data);
+                        }
+                    }
+                }
+            },
+            Err(_) => {
+                return Err(warp::reject())
+            },
+        }
+    }
+    Ok(warp::reply())
+}
 
 #[tokio::main]
 async fn main() {
@@ -18,9 +41,14 @@ async fn main() {
     let client = warp::get()
         .and(warp::fs::dir("client"));
 
+    let form = warp::path("form")
+        .and(warp::multipart::form())
+        .and_then(form_handler);
+
     let routes = index
         .or(client)
-        .or(data);
+        .or(data)
+        .or(form);
 
     warp::serve(routes)
         .run(([127, 0, 0, 1], 3030))
