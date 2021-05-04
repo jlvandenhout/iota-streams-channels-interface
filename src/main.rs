@@ -1,37 +1,16 @@
-
 use futures::{SinkExt, StreamExt};
-use warp::{Filter, Rejection, Reply};
+use warp::{Buf, Filter, Rejection, Reply};
+use warp::multipart::FormData;
+use std::convert::From;
 
-
-async fn form_handler(mut form_data: warp::multipart::FormData) -> Result<impl Reply, Rejection> {
-    while let Some(part) = form_data.next().await {
-        match part {
-            Ok(message) => {
-                println!("{}", message.name());
-                let stream = message.stream();
-                while let Some(s) = stream.next().await {
-                    match s {
-                        Ok(data) => {
-                            let string = String::from_utf8(data);
-                        }
-                    }
-                }
-            },
-            Err(_) => {
-                return Err(warp::reject())
-            },
-        }
-    }
-    Ok(warp::reply())
-}
 
 #[tokio::main]
 async fn main() {
-    let data = warp::path("data")
+    let data = warp::path("data").map
         .and(warp::ws())
         .map(
             |ws: warp::ws::Ws| {
-                ws.on_upgrade(move |socket| handle(socket))
+                ws.on_upgrade(move |socket| handle_socket(socket))
             }
         );
 
@@ -43,7 +22,7 @@ async fn main() {
 
     let form = warp::path("form")
         .and(warp::multipart::form())
-        .and_then(form_handler);
+        .and_then(handle_form);
 
     let routes = index
         .or(client)
@@ -55,7 +34,37 @@ async fn main() {
         .await;
 }
 
-async fn handle(mut socket: warp::ws::WebSocket) {
+
+async fn handle_form(mut form: FormData) -> Result<impl Reply, Rejection> {
+    while let Some(result) = form.next().await {
+        if let Ok(mut part) = result {
+            let mut bytes : Vec<u8> = Vec::new();
+
+            while let Some(result) = part.data().await {
+                if let Ok(buffer) = result {
+                    bytes.extend_from_slice(buffer.chunk());
+                } else {
+                    return Err(warp::reject());
+                }
+            }
+
+            let name = String::from(part.name());
+            let value = match String::from_utf8(bytes) {
+                Ok(value) => value,
+                Err(_) => return Err(warp::reject()),
+            };
+
+            println!("{}: {}", name, value);
+        } else {
+            return Err(warp::reject());
+        }
+    }
+
+    Ok(warp::reply())
+}
+
+
+async fn handle_socket(mut socket: warp::ws::WebSocket) {
     while let Some(input) = socket.next().await {
         match input {
             Ok(message) => {
