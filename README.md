@@ -50,17 +50,23 @@ npm run start
 The graphical user interface is built in Javascript using React and communicates to the server in JSON. User input is sent in the body of POST requests. Server output will be received using a web socket connection. The server is implemented in Rust using the `warp` crate and provides a mapping between the user interface and the Streams Channels interface.
 
 ## TODO list
-[x] Implement a way to set up the prerequisites like initializing a Transport and a User instance.
-[] Map basic functionality to graphical components:
-    [] Announcing a Channel as an Author.
-    [] Sending a Message as an Author.
-    [] Participate in a Channel as a Recipient.
-    [] Receive a Message as a Recipient.
-[] Map remaining functionality to graphical components:
-    [] Sending Keyload Messages as an Author.
-    [] Subscribing and unsubscribing to a Channel as Recipient.
-    []
-[] Allow to persist and recall User states (client side or server side?).
+- [x] Implement a way to set up the prerequisites like initializing a Transport and a User instance.
+- [ ] Map basic functionality to graphical components:
+    - [ ] Announcing a Channel as an Author.
+    - [ ] Sending a Tagged Message as an Author.
+    - [ ] Participate in a Channel as a Recipient.
+    - [ ] Receive Messages as a Recipient.
+- [ ] Map remaining functionality to graphical components:
+    - [ ] Sending Keyload Messages as an Author.
+    - [ ] Subscribe and Unsubscribe as a Recipient.
+    - [ ] Become a Publisher as Recipient.
+    - [ ] Sending Tagged Messages as a Publisher.
+- [ ] Allow to persist and recall User states (client side or server side?).
+- [ ] Visualize the message structure:
+    - [ ] Listen for message updates.
+    - [ ] Display messages in a graph.
+    - [ ] Figure out how to find the next linked message ID from any current message.
+    - [ ] Connect linked messages in the graph.
 
 ## Contribute
 Any feedback on code quality, suggestions or help is welcome. Feel free to open an issue, send a PR or [contact me on the IOTA Discord server](https://discordapp.com/users/453235678386585601/).
