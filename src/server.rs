@@ -34,6 +34,7 @@ pub async fn start(port: u16) {
         .or(connect)
         .or(participate);
 
+    println!("Serving on: http://localhost:{}", port);
     warp::serve(filter)
         .run(([127, 0, 0, 1], port))
         .await;
