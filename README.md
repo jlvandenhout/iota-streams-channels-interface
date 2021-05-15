@@ -27,7 +27,7 @@ To just serve the user interface on default port 3000 without server functionali
 
 ```bash
 cd interface
-npm run start
+npm start
 ```
 
 ## User flow
