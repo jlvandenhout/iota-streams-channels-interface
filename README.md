@@ -36,8 +36,8 @@ npm run start
     - Mainnet.
     - Custom Node URL.
 2. Initialize a User instance:
-    2.1. Provide a Seed.
-    2.2. Choose between:
+    1. Provide a Seed.
+    2. Choose between:
         - Become an Author to a Single Branch Channel.
         - Become an Author to a Multi Branch Channel.
         - Become a Recipient to a Channel.
