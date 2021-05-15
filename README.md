@@ -6,7 +6,6 @@ To build and run the server and interface, we need:
 
 - [Rust](https://www.rust-lang.org/tools/install).
 - [npm](https://www.npmjs.com/get-npm).
-- An editor. We recommend [Visual Studio Code](https://code.visualstudio.com/Download) with the [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer) extension.
 
 ## Getting started
 To clone and serve on default port 3030:
