@@ -67,6 +67,10 @@ The graphical user interface is built in Javascript using React and communicates
     - [ ] Display messages in a graph.
     - [ ] Figure out how to find the next linked message ID from any current message.
     - [ ] Connect linked messages in the graph.
+- [ ] Improve error handling:
+    - [ ] Provide a way to communicate errors to the interface (can be regular HTTP status codes in response to the POST request).
+    - [ ] Validate user input ([validator](https://docs.rs/validator) is a good candidate for this).
+    - [ ] Monitor Channels messaging errors.
 
 ## Contribute
 Any feedback on code quality, suggestions or help is welcome. Feel free to open an issue, send a PR or [contact me on the IOTA Discord server](https://discordapp.com/users/453235678386585601/).
