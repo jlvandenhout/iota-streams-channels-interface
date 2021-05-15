@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'iota-streams-channels-interface'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=iota-streams-channels-interface",
+                    "--package=iota-streams-channels-interface"
+                ],
+                "filter": {
+                    "name": "iota-streams-channels-interface",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'iota-streams-channels-interface'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=iota-streams-channels-interface",
+                    "--package=iota-streams-channels-interface"
+                ],
+                "filter": {
+                    "name": "iota-streams-channels-interface",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
