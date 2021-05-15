@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import Introduce from './components/Introduce'
 import Connect from './components/Connect'
 import Participate from './components/Participate'
-import Stream from './components/Stream'
+import Interact from './components/Interact'
 import Logo from './assets/logo.svg'
 
 const App = () => {
@@ -20,8 +20,8 @@ const App = () => {
           <Route path='/connect'>
             <Connect stateHistory = {stateHistory}/>
           </Route>
-          <Route path='/stream'>
-            <Stream/>
+          <Route path='/interact'>
+            <Interact/>
           </Route>
           <Route path='/'>
             <Introduce stateHistory = {stateHistory}/>

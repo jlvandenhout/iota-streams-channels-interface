@@ -19,7 +19,7 @@ const Participate = ({ stateHistory }) => {
       )
     }
 
-    fetch(fetchUrl, fetchOptions).then(stateHistory.push('/stream'))
+    fetch(fetchUrl, fetchOptions).then(stateHistory.push('/interact'))
   }
 
   return (
