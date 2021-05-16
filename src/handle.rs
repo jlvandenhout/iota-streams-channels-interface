@@ -1,10 +1,10 @@
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use serde::{Deserialize, Serialize};
+use warp::http::StatusCode;
 use iota_streams::app_channels::api::tangle::{
     Author,
     Subscriber,
-    Address,
 };
 use iota_streams::app::transport::tangle::{
     PAYLOAD_BYTES,
@@ -50,7 +50,7 @@ pub async fn connect(
 ) -> Result<impl warp::Reply, std::convert::Infallible> {
     let mut optional_url = optional_url.lock().await;
     optional_url.replace(connect_options.url);
-    Ok(warp::reply())
+    Ok(StatusCode::OK)
 }
 
 
@@ -91,9 +91,9 @@ pub async fn participate(
             .await
             .replace(participant);
 
-        Ok(warp::reply())
+        Ok(StatusCode::OK)
     } else {
-        Err(warp::reject())
+        Ok(StatusCode::CONFLICT)
     }
 }
 
@@ -101,22 +101,29 @@ pub async fn participate(
 pub async fn interact(
     optional_participant: Arc<Mutex<Option<Participant>>>,
     interact_options: InteractOptions,
-) -> core::result::Result<impl warp::Reply, warp::Rejection> {
+) -> core::result::Result<impl warp::Reply, std::convert::Infallible> {
     let mut optional_participant = optional_participant.lock().await;
 
     if let Some(participant) = optional_participant.as_mut() {
         if let Participant::Author(author) = participant {
             match interact_options {
                 InteractOptions::Announce => {
-                    // BREAKING:
-                    // author.send_announce().await;
-                    Ok(warp::reply())
-                }
-            }
+                    // // BREAKING:
+                    // match author.send_announce().await {
+                    //     Ok(address) => {
+                    //         println!("{}", address);
+                    //     },
+                    //     Err(error) => {
+                    //         println!("{}", error);
+                    //     }
+                    // };
+                },
+            };
+            Ok(StatusCode::OK)
         } else {
-            Err(warp::reject())
+            Ok(StatusCode::BAD_REQUEST)
         }
     } else {
-        Err(warp::reject())
+        Ok(StatusCode::CONFLICT)
     }
 }
