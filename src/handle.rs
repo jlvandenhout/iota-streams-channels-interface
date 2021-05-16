@@ -1,9 +1,10 @@
 use std::sync::Arc;
 use tokio::sync::Mutex;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use iota_streams::app_channels::api::tangle::{
     Author,
     Subscriber,
+    Address,
 };
 use iota_streams::app::transport::tangle::{
     PAYLOAD_BYTES,
@@ -27,6 +28,19 @@ pub enum ParticipateOptions {
 #[derive(Deserialize)]
 pub struct ConnectOptions {
     url: String,
+}
+#[derive(Deserialize)]
+#[serde(untagged, rename_all = "camelCase")]
+pub enum InteractOptions {
+    Announce,
+}
+
+#[derive(Serialize)]
+#[serde(untagged, rename_all = "camelCase")]
+pub enum Response {
+    MessageID {
+        message_id: String,
+    },
 }
 
 
@@ -78,6 +92,30 @@ pub async fn participate(
             .replace(participant);
 
         Ok(warp::reply())
+    } else {
+        Err(warp::reject())
+    }
+}
+
+
+pub async fn interact(
+    optional_participant: Arc<Mutex<Option<Participant>>>,
+    interact_options: InteractOptions,
+) -> core::result::Result<impl warp::Reply, warp::Rejection> {
+    let mut optional_participant = optional_participant.lock().await;
+
+    if let Some(participant) = optional_participant.as_mut() {
+        if let Participant::Author(author) = participant {
+            match interact_options {
+                InteractOptions::Announce => {
+                    // BREAKING:
+                    // author.send_announce().await;
+                    Ok(warp::reply())
+                }
+            }
+        } else {
+            Err(warp::reject())
+        }
     } else {
         Err(warp::reject())
     }

@@ -30,9 +30,16 @@ pub async fn start(port: u16) {
         .and(warp::body::json())
         .and_then(handle::participate);
 
+    let interact = warp::path("interact")
+        .and(warp::post())
+        .and(with(optional_participant.clone()))
+        .and(warp::body::json())
+        .and_then(handle::interact);
+
     let filter = interface
         .or(connect)
-        .or(participate);
+        .or(participate)
+        .or(interact);
 
     println!("Serving on: http://localhost:{}", port);
     warp::serve(filter)
