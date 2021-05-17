@@ -1,6 +1,6 @@
 use std::sync::Arc;
 use tokio::sync::Mutex;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use warp::http::StatusCode;
 use iota_streams::app_channels::api::tangle::{
     Author,
@@ -29,18 +29,11 @@ pub enum ParticipateOptions {
 pub struct ConnectOptions {
     url: String,
 }
+
 #[derive(Deserialize)]
 #[serde(untagged, rename_all = "camelCase")]
 pub enum InteractOptions {
     Announce,
-}
-
-#[derive(Serialize)]
-#[serde(untagged, rename_all = "camelCase")]
-pub enum Response {
-    MessageID {
-        message_id: String,
-    },
 }
 
 
@@ -106,17 +99,10 @@ pub async fn interact(
 
     if let Some(participant) = optional_participant.as_mut() {
         if let Participant::Author(author) = participant {
-            match interact_options {
+            let _ = match interact_options {
                 InteractOptions::Announce => {
-                    // // BREAKING:
-                    // match author.send_announce().await {
-                    //     Ok(address) => {
-                    //         println!("{}", address);
-                    //     },
-                    //     Err(error) => {
-                    //         println!("{}", error);
-                    //     }
-                    // };
+                    // BREAKING:
+                    // author.send_announce().await
                 },
             };
             Ok(StatusCode::OK)
