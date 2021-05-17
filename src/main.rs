@@ -47,6 +47,7 @@ async fn send_announce(
 ) -> Result<impl warp::Reply, Infallible> {
     let mut author = author.lock().await;
 
+    // BREAKING:
     if let Ok(address) = author.send_announce().await {
         Ok(address.to_string())
     } else {
