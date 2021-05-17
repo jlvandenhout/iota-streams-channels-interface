@@ -5,7 +5,6 @@ use std::{
 
 use tokio::sync::Mutex;
 use warp::Filter;
-
 use iota_streams::app_channels::api::tangle::Author;
 use iota_streams::app::transport::tangle::{
     PAYLOAD_BYTES,
@@ -34,6 +33,7 @@ async fn main() {
     warp::serve(route).run(([127, 0, 0, 1], 3030)).await;
 }
 
+fn is_send<T: Send>(_: T) {}
 
 fn with_reference<T: Clone + Send>(
     reference: T
@@ -47,10 +47,14 @@ async fn send_announce(
 ) -> Result<impl warp::Reply, Infallible> {
     let mut author = author.lock().await;
 
-    // BREAKING:
-    if let Ok(address) = author.send_announce().await {
-        Ok(address.to_string())
-    } else {
-        Ok(String::from("Failed to send announcement"))
+    match author.send_announce() {
+        Ok(address) => {
+            println!("{}", address);
+            Ok(warp::reply())
+        },
+        Err(error) => {
+            is_send(error);
+            Ok(warp::reply())
+        }
     }
 }
