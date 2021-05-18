@@ -1,10 +1,11 @@
-use std::{
-    convert::Infallible,
-    sync::Arc,
-};
+use std::sync::Arc;
 
 use tokio::sync::Mutex;
-use warp::Filter;
+use warp::{
+    http::StatusCode,
+    Filter,
+};
+
 use iota_streams::app_channels::api::tangle::Author;
 use iota_streams::app::transport::tangle::{
     PAYLOAD_BYTES,
@@ -27,34 +28,18 @@ async fn main() {
     );
 
     let route = warp::get()
-        .and(with_reference(author.clone()))
-        .and_then(send_announce);
+        .and_then(
+            || async {
+                let mut author = author.lock().await;
+
+                // BREAKING: Why does returned Future not implement Send?
+                if author.send_announce().await.is_ok() {
+                    Ok(StatusCode::OK)
+                } else {
+                    Ok(StatusCode::CONFLICT)
+                }
+            }
+        );
 
     warp::serve(route).run(([127, 0, 0, 1], 3030)).await;
-}
-
-fn is_send<T: Send>(_: T) {}
-
-fn with_reference<T: Clone + Send>(
-    reference: T
-) -> impl Filter<Extract = (T,), Error = Infallible> + Clone {
-    warp::any().map(move || reference.clone())
-}
-
-
-async fn send_announce(
-    author: Arc<Mutex<Author<Client>>>
-) -> Result<impl warp::Reply, Infallible> {
-    let mut author = author.lock().await;
-
-    match author.send_announce() {
-        Ok(address) => {
-            println!("{}", address);
-            Ok(warp::reply())
-        },
-        Err(error) => {
-            is_send(error);
-            Ok(warp::reply())
-        }
-    }
 }
