@@ -1019,7 +1019,10 @@ dependencies = [
 name = "iota-streams-channels-interface"
 version = "0.1.0"
 dependencies = [
+ "futures",
  "iota-streams",
+ "serde",
+ "serde_json",
  "tokio",
  "warp",
 ]
