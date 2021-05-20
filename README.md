@@ -1,6 +1,10 @@
 # IOTA Streams Channels Interface
 A browser based graphical user interface to the IOTA Streams Channels application. The intention is to have a graphical way to explore the possibilities of the application and visualize the message structure.
 
+|⚠️ WORK IN PROGRESS ⚠️|
+|-----------------------|
+|This repository is actively developed and does not contain a usable program yet.|
+
 ## Prerequisites
 To build and run the server and interface, we need:
 
